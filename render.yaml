@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: mickey-paper-room
+    runtime: static
+    branch: main
+    buildCommand: node verify-release.cjs
+    staticPublishPath: ./site
+    autoDeployTrigger: off

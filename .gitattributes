@@ -1,0 +1,5 @@
+site/** -text
+*.md text eol=lf
+*.yaml text eol=lf
+*.cjs text eol=lf
+release-manifest.json text eol=lf

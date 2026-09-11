@@ -1,0 +1,107 @@
+[
+  {
+    "file": "assets/FONT-SOURCE.txt",
+    "bytes": 2488,
+    "sha256": "a40d98776a5f6db4eae45e8700096b5f78aca2dfcc6f9cec60cf03b36d7415fa"
+  },
+  {
+    "file": "assets/KENNEY-LICENSE.txt",
+    "bytes": 699,
+    "sha256": "68280323c6dca1f532c71fb248a6f344abed39a574278a2edfa27801aea3d0cd"
+  },
+  {
+    "file": "assets/OFL.txt",
+    "bytes": 4397,
+    "sha256": "d7bdb1cee215b689e23c2f95672a6084c790542170648267a55114103d756a08"
+  },
+  {
+    "file": "assets/details-v24.glb",
+    "bytes": 5126652,
+    "sha256": "0bbe362a5cf46c80d35978904f46d3ca6e4814b4e8ca93af82c71e5e4f794c20"
+  },
+  {
+    "file": "assets/entrance-v11/door-pencil-hd.png",
+    "bytes": 1245257,
+    "sha256": "07e7aa26da22cf6bc401e2bc9372a0366f02bf27b7e5b1b867cd56269d757ab1"
+  },
+  {
+    "file": "assets/entrance-v13/potted-plant-alpha.png",
+    "bytes": 875784,
+    "sha256": "40173bdfb8dff32c42176cebad2dae13f1f35d4c2cfd2cfd71d425844879c8c7"
+  },
+  {
+    "file": "assets/entrance-v7/oak-pencil.png",
+    "bytes": 3178170,
+    "sha256": "86b4ad3fecbbb0fe1c0d427899862a592912f5da9fb6824ddfc3edbaccb79b83"
+  },
+  {
+    "file": "assets/entrance-v7/reference.png",
+    "bytes": 1731606,
+    "sha256": "034d2ac5e2f21c66d245ddcce888ed07463beee4b17d932b752510ad8b0107b5"
+  },
+  {
+    "file": "assets/entrance-v8/botanical-card.png",
+    "bytes": 1158843,
+    "sha256": "774471104f3761c3814724228695467275e3d123d2b737a9fb690c66065ce367"
+  },
+  {
+    "file": "assets/entrance-v8/plaque.png",
+    "bytes": 1081584,
+    "sha256": "4749edf028edac026e40341c7f111c6956347237a147b186938ec2badc563a70"
+  },
+  {
+    "file": "assets/entrance-v8/wooden-stool.png",
+    "bytes": 1010450,
+    "sha256": "5fe123682af1f7daa98762a888834c05d59f0c13910de0c7d21a05197384a7a9"
+  },
+  {
+    "file": "assets/furnishings-v24.glb",
+    "bytes": 1324408,
+    "sha256": "691508d93ddf40eb53e11e718e8f13cf2ded204fe10ccadaa0dd75dafdf8e2ed"
+  },
+  {
+    "file": "assets/hand.woff2",
+    "bytes": 175664,
+    "sha256": "86e84b47fd42118df94889c476c7b9ebc06a50db95600032e966af0569e21de8"
+  },
+  {
+    "file": "assets/player-v5-web.glb",
+    "bytes": 168380,
+    "sha256": "fd2dabdca3ea0b920be6fb25dbc756d56d9341b33d103d4b0f042cb9dc1925cb"
+  },
+  {
+    "file": "assets/room-v24-web.glb",
+    "bytes": 16253220,
+    "sha256": "c5d3fa9f58e65a537ebc5491303754496eb3b95294f3a3abd68ffa657b04d39d"
+  },
+  {
+    "file": "assets/room-v3-B47B9xl_.css",
+    "bytes": 24180,
+    "sha256": "ec4acce51ba0b77087ddbceb6864806ee8dd6408bdc98777e25fdd0418610989"
+  },
+  {
+    "file": "assets/room-v3-BPdHjosb.js",
+    "bytes": 205642,
+    "sha256": "fa532200f274686fbf3d6b60bde7a31128ad0a90fdcf9b153bf0860b68f03493"
+  },
+  {
+    "file": "assets/room-v6-colliders.json",
+    "bytes": 2471,
+    "sha256": "7e137a072e81a3c27a7ce276c59a7793fa551e8c55d6cd5871f497e31e5404fa"
+  },
+  {
+    "file": "assets/three-DR2_W5bf.js",
+    "bytes": 565278,
+    "sha256": "08754e9127bbc751a89a15d997e4cfa750fa4b38928b31819f2ee2636d7f7019"
+  },
+  {
+    "file": "index.html",
+    "bytes": 10970,
+    "sha256": "0ca7ad82c357987c17bf1122f55c4b041883ad4e1b5a1759e9adae58628c5607"
+  },
+  {
+    "file": "room-v3.html",
+    "bytes": 10970,
+    "sha256": "0ca7ad82c357987c17bf1122f55c4b041883ad4e1b5a1759e9adae58628c5607"
+  }
+]
