@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>一间自己的房间</title><meta name="description" content="推开门，走进我的手绘房间。"/><link rel="icon" href="data:,"/>  <script type="module" crossorigin src="/assets/three-DR2_W5bf.js"></script>
-  <script type="module" crossorigin src="/assets/room-v3-BPdHjosb.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/room-v3-B47B9xl_.css">
+  <script type="module" crossorigin src="/assets/room-v3-DYNtfTus.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/room-v3-Zb8bXPdI.css">
 </head>
 <body data-phase="loading" data-booting><style>
 /* Same original pixels, source crop and screen projection as entrance-v7.js. */
@@ -14,16 +14,16 @@ body[data-booting]>:not(#boot-screen):not(style):not(script){visibility:hidden!i
 #boot-screen .boot-center{position:absolute;left:50%;width:min(340px,calc(100vw - 40px));text-align:center;transform:translateX(-50%)}
 #boot-screen h2{font:400 16px/1.6 KaiTi,STKaiti,'Songti SC',serif;letter-spacing:2px;margin:0 0 8px}
 #boot-screen .boot-message{min-height:20px;margin:0;font:11px/1.8 'Microsoft YaHei','PingFang SC',sans-serif;letter-spacing:.5px;color:#95938a}
-#boot-screen .boot-track{height:1px;width:150px;margin:15px auto 9px;background:#e3e2db;transform:rotate(-.4deg)}
-#boot-screen .boot-progress{height:100%;width:0;background:#777969;transition:width .65s ease}
-#boot-screen .boot-count{min-height:14px;font:9px/1.5 'Microsoft YaHei',sans-serif;letter-spacing:1px;color:#aaa79d;margin:0}
+#boot-screen .boot-message::after{content:'…';display:inline-block;animation:boot-breath 2s ease-in-out infinite}
+#boot-screen[data-error] .boot-message::after{content:none}
+@keyframes boot-breath{50%{opacity:.25}}
 #boot-screen .boot-retry{display:block;margin:12px auto 0;padding:8px 16px;border:1px solid #c6c5ba;border-radius:2px;background:white;color:#55554d;font:12px/1.4 'Microsoft YaHei',sans-serif;cursor:pointer}
 #boot-screen .boot-retry:focus-visible{outline:2px solid #797b66;outline-offset:4px}
 #boot-screen [hidden]{display:none!important}
 #boot-screen.boot-leaving{opacity:0;pointer-events:none}
 @media(max-width:600px){#boot-screen .boot-brand{top:27px;left:25px;font-size:8px;letter-spacing:2.7px}#boot-screen h2{font-size:15px}}
 @media(max-height:570px){#boot-screen .boot-center{left:calc(50% - 235px);top:50%!important;transform:translate(-50%,-50%);width:200px}}
-@media(prefers-reduced-motion:reduce){#boot-screen{transition:opacity .12s}#boot-screen .boot-progress{transition:none}}
+@media(prefers-reduced-motion:reduce){#boot-screen{transition:opacity .12s}#boot-screen .boot-message::after{animation:none}}
 </style>
 <section id="boot-screen" aria-label="正在准备房间" aria-busy="true">
  <span class="boot-brand">A ROOM OF MY OWN</span>
@@ -46,43 +46,55 @@ body[data-booting]>:not(#boot-screen):not(style):not(script){visibility:hidden!i
  </svg>
  <div class="boot-center" id="boot-caption">
   <h2 id="boot-title">一笔一画，准备一间房间</h2>
-  <p class="boot-message" id="boot-message" role="status" aria-live="polite">正在取来门口的画稿…</p>
-  <div class="boot-track" aria-hidden="true"><div class="boot-progress" id="boot-progress"></div></div>
-  <p class="boot-count" id="boot-count">请稍候</p>
+  <p class="boot-message" id="boot-message" role="status" aria-live="polite">正在取来门口的画稿</p>
   <button class="boot-retry" id="boot-retry" hidden>重新加载</button>
   <noscript><p>这间互动房间需要启用 JavaScript。</p></noscript>
  </div>
 </section>
 <script>
 (()=>{
- const screen=document.getElementById('boot-screen'),door=document.getElementById('boot-door'),message=document.getElementById('boot-message'),count=document.getElementById('boot-count'),bar=document.getElementById('boot-progress'),retry=document.getElementById('boot-retry'),caption=document.getElementById('boot-caption');
+ const screen=document.getElementById('boot-screen'),door=document.getElementById('boot-door'),message=document.getElementById('boot-message'),retry=document.getElementById('boot-retry'),caption=document.getElementById('boot-caption');
  const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
- let complete=false,failed=false,prepared=0,finishing=false;
- const locked=new Map(),animations=[];
+ let complete=false,failed=false,prepared=0,finishing=false,sourceReady=false,shown=0,target=0,raf,last=performance.now(),resolveDrawing;
+ const weights={"room-v24-web.glb":16253220,"player-v5-web.glb":168380,"room-v6-colliders.json":2471,"details-v24.glb":5126652,"furnishings-v24.glb":1324408,"entrance-v7/reference.png":1731606,"entrance-v7/oak-pencil.png":3178170,"entrance-v11/door-pencil-hd.png":1245257,"entrance-v8/plaque.png":1081584,"entrance-v8/botanical-card.png":1158843,"entrance-v8/wooden-stool.png":1010450,"entrance-v13/potted-plant-alpha.png":875784},received=new Map(),totalBytes=Object.values(weights).reduce((a,b)=>a+b,0);
+ const locked=new Map(),drawing=new Promise(resolve=>resolveDrawing=resolve);
+ function resource(file,loaded,total){if(failed||complete||!weights[file])return;const fraction=Math.min(1,loaded/(total>0?total:weights[file]));received.set(file,Math.max(received.get(file)||0,fraction));updateTarget();}
+ function updateTarget(){if(finishing){target=1;return}const downloaded=Object.entries(weights).reduce((sum,[file,size])=>sum+size*(received.get(file)||0),0)/totalBytes;target=Math.max(target,(sourceReady?.02:0)+downloaded*.86+Math.min(prepared/6,1)*.06);}
+ // Image downloads also count, including cached images and the first-paint door.
+ // Resource timing reports their completion; GLB streams report every received chunk.
+ const resources=new PerformanceObserver(list=>{for(const entry of list.getEntries()){const url=new URL(entry.name,location.href);if(url.origin===location.origin&&url.pathname.startsWith('/assets/'))resource(url.pathname.slice(8),1,1);}});
+ resources.observe({type:'resource',buffered:true});
  function lock(){for(const el of document.body.children){if(el===screen||/^(SCRIPT|STYLE)$/.test(el.tagName))continue;if(!locked.has(el)){locked.set(el,el.inert);el.inert=true;}}}
  const observer=new MutationObserver(lock);observer.observe(document.body,{childList:true});lock();
  function resize(){const w=innerWidth,h=innerHeight,baseHeight=w<650?1100:Math.max(941,1672/(w/h)),s=h/baseHeight;door.style.left=(w/2+(696-836)*s)+'px';door.style.top=(h/2+(174-470.5)*s)+'px';door.style.width=280*s+'px';door.style.height=526*s+'px';caption.style.top=(h/2+(700-470.5)*s+25)+'px';}
  resize();addEventListener('resize',resize);
  const paths=[...door.querySelectorAll('path')];for(const p of paths){const length=p.getTotalLength();p.style.strokeDasharray=length;p.style.strokeDashoffset=length;}
  retry.onclick=()=>location.reload();
- const slow=setTimeout(()=>{if(!complete&&!failed){message.textContent='初次来访，房间还在准备中…';count.textContent='网络较慢时，请再等一会儿';retry.hidden=false;}},18000);
- function fail(){if(complete||failed)return;failed=true;clearTimeout(slow);screen.dataset.error='true';screen.setAttribute('aria-busy','false');document.getElementById('boot-title').textContent='房间还没准备好';message.textContent='连接似乎中断了，再试一次吧。';count.textContent='重新加载后，会再次准备房间';retry.hidden=false;}
+ const slow=setTimeout(()=>{if(!complete&&!failed){message.textContent='初次来访，房间还在准备中';retry.hidden=false;}},18000);
+ function fail(){if(complete||failed)return;failed=true;clearTimeout(slow);cancelAnimationFrame(raf);resources.disconnect();resolveDrawing();screen.dataset.error='true';screen.setAttribute('aria-busy','false');document.getElementById('boot-title').textContent='房间还没准备好';message.textContent='连接似乎中断了，再试一次吧。';retry.hidden=false;}
  // Reveal original pixels along the existing pencil strokes, then paper grain.
  const source=new Image();source.fetchPriority='high';source.src='/assets/entrance-v11/door-pencil-hd.png';
- const drawing=source.decode().then(async()=>{
+ source.decode().then(()=>{
+  sourceReady=true;updateTarget();
   screen.dataset.drawing='true';
-  if(reduced){paths.forEach(p=>p.style.strokeDashoffset='0');document.getElementById('boot-paper-detail').setAttribute('opacity','1');screen.dataset.drawing='complete';return;}
-  for(const p of paths)animations.push(p.animate([{strokeDashoffset:p.getTotalLength()},{strokeDashoffset:0}],{duration:+p.dataset.duration,delay:+p.dataset.start,easing:'linear',fill:'forwards'}));
-  animations.push(document.getElementById('boot-paper-detail').animate([{opacity:0},{opacity:1}],{delay:9000,duration:1400,easing:'ease-in-out',fill:'forwards'}));
-  await Promise.all(animations.map(a=>a.finished));screen.dataset.drawing='complete';
  }).catch(fail);
- function clean(){screen.remove();delete window.paperBoot;removeEventListener('resize',resize);removeEventListener('error',onError,true);removeEventListener('unhandledrejection',fail);}
+ const strokes=paths.map(p=>({p,length:p.getTotalLength(),start:+p.dataset.start,duration:+p.dataset.duration})),detail=document.getElementById('boot-paper-detail');
+ function draw(now){if(failed||complete)return;const dt=Math.min((now-last)/1000,.1);last=now;
+  if(sourceReady){const gap=target-shown;shown+=Math.min(gap,dt*(reduced?4:.2),gap*(1-Math.exp(-dt*(reduced?15:3))));if(finishing&&1-shown<.001)shown=1;
+   const position=shown*10400;for(const s of strokes)s.p.style.strokeDashoffset=s.length*(1-Math.max(0,Math.min(1,(position-s.start)/s.duration)));
+   const grain=Math.max(0,Math.min(1,(position-9000)/1400));detail.setAttribute('opacity',grain*grain*(3-2*grain));
+   if(shown===1){screen.dataset.drawing='complete';resolveDrawing();return;}
+  }raf=requestAnimationFrame(draw);
+ }raf=requestAnimationFrame(draw);
+ function clean(){cancelAnimationFrame(raf);resources.disconnect();screen.remove();delete window.paperBoot;removeEventListener('resize',resize);removeEventListener('error',onError,true);removeEventListener('unhandledrejection',fail);}
  function onError(e){if(e.target?.tagName==='SCRIPT'||e.error)fail();}
  window.paperBoot={
-  stage(text){if(!failed&&!complete)message.textContent=text;},
-  step(){if(failed||complete)return;prepared++;bar.style.width=(prepared/6*88)+'%';count.textContent='已准备 '+prepared+' / 6 组内容';},
+  stage(text){if(!failed&&!complete)message.textContent=text.replace(/…+$/,'');},
+  resource,
+  step(){if(failed||complete)return;prepared++;updateTarget();},
+  get state(){return{shown,target,prepared,sourceReady,finishing,failed};},
   fail,
-  async finish(){if(failed||complete||finishing)return;finishing=true;bar.style.width='100%';message.textContent='房间已备好，正在完成门口的最后几笔…';count.textContent='';retry.hidden=true;
+  async finish(){if(failed||complete||finishing)return;finishing=true;clearTimeout(slow);updateTarget();message.textContent='正在完成门口的最后几笔';retry.hidden=true;
    await drawing;if(failed)return;
    complete=true;clearTimeout(slow);message.textContent='房间准备好了，进来坐坐。';screen.setAttribute('aria-busy','false');
    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
